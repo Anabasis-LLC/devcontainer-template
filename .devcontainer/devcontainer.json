@@ -1,0 +1,24 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/app",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// utilities
+				"EditorConfig.EditorConfig",
+				// prettier / eslint
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"rvest.vs-code-prettier-eslint"
+			]
+		}
+	},
+	"remoteUser": "ubuntu",
+	"containerUser": "ubuntu",
+	"postCreateCommand": "/app/.devcontainer/post-create"
+	// By default the devcontainer will stop when vscode exits. You change that
+	// behavior if desired.
+	// "shutdownAction": "none"
+}

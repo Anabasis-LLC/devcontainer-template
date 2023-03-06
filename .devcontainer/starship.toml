@@ -1,0 +1,31 @@
+format = """
+[⁝](black bold) $directory$git_branch$git_status$cmd_duration$time$nodejs
+$character"""
+
+[character]
+success_symbol = "[❱](green bold)"
+error_symbol = "[✘](red bold)"
+
+[username]
+style_user = "black bold"
+style_root = "cyan bold"
+show_always = true
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+format = "[$hostname](black bold) "
+
+[cmd_duration]
+min_time = 250
+show_milliseconds = true
+
+[time]
+disabled = false
+use_12hr = true
+style = "black bold"
+
+[nodejs]
+detect_extensions = ['ts', 'tsx']
+detect_files = []
+detect_folders = []

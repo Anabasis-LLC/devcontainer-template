@@ -1,0 +1,64 @@
+FROM ubuntu:latest
+
+# Install prerequisites.
+# libz-dev libssl-dev libpq-dev
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential \
+    locales lsb-release zsh sudo \
+    direnv curl unzip git screen jq
+
+# Install Docker (to build images to push to ECR during the deploy process).
+RUN sudo mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y docker-ce-cli
+
+# Create the `ubuntu` user and grant sudo permissions (without a password).
+RUN adduser --disabled-password --shell /bin/zsh --gecos '' ubuntu
+RUN adduser ubuntu sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Set the system locale.
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US LC_ALL=en_US.UTF-8
+RUN locale-gen --no-purge en_US.UTF-8 && locale-gen
+
+USER ubuntu
+
+# Install Oh My Zsh!
+# https://ohmyz.sh/
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Install starship.
+# https://starship.rs/
+RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -f
+
+# Install neovim.
+# https://neovim.io/
+RUN curl -L https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.deb -o /tmp/nvim-linux64.deb && sudo apt install /tmp/nvim-linux64.deb
+
+# Install NvChad.
+# https://nvchad.com/
+RUN git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
+
+# Install asdf and asdf tool versions.
+RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.1
+COPY --chown=ubuntu:ubuntu .tool-versions /home/ubuntu/
+
+# Use asdf to install node.js and system-wide npm package dependencies.
+# https://github.com/asdf-vm/asdf-nodejs/issues/42
+# pnpm - https://pnpm.io/
+# pm2 - https://pm2.keymetrics.io/
+RUN /bin/zsh -c " \
+  . ~/.asdf/asdf.sh && \
+  asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git && \
+  asdf install nodejs && \
+  npm install -g pnpm@latest \
+  npm install -g pm2@latest \
+"
+
+# Configure dot files.
+RUN rm -f ~/.zshrc && ln -s /app/.devcontainer/.zshrc ~
+RUN mkdir -p ~/.config && \
+  rm -f ~/.config/starship.toml && \
+  ln -s /app/.devcontainer/starship.toml ~/.config

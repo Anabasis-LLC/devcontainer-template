@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+docker exec -it $(docker ps -q -f name=devcontainer) /bin/zsh

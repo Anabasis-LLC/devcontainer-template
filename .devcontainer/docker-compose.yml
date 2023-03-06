@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.devcontainer
+    container_name: devcontainer-anabasis
+    command: sleep infinity
+    volumes:
+        - ../:/app
+        - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5173:5173"
