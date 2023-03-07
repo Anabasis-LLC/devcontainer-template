@@ -21,6 +21,4 @@
   "[typescript]": {
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
   },
-
-  "typescript.tsdk": "node_modules/typescript/lib",
 }

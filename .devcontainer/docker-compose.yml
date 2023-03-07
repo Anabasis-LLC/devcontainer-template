@@ -5,10 +5,11 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile.devcontainer
-    container_name: devcontainer-anabasis
+    container_name: devcontainer-template
     command: sleep infinity
     volumes:
         - ../:/app
         - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "5173:5173"
+    # ports:
+    #   - "3000:3000"
+    #   - "5173:5173"
